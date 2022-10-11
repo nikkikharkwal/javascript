@@ -3,6 +3,9 @@
 .upm
 node_modules
 .replit
-package
-package-lock
+
+package.json
+
 replit.nix
+
+package-lock.json
