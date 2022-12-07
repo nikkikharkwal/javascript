@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        margin-top: 30px;
+        /* border: 2px solid; */
+        display: grid;
+        grid-template-columns: repeat(3, 30%);
+        column-gap: 7%;
+        row-gap: 30px;
+      }
+      #container .child > div {
+        /* border: 1px solid red; */
+        display: flex;
+        justify-content: space-between;
+        width: 60%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sorter">
+      <select id="priceSort">
+        <option value="">Sort By Price</option>
+        <option value="h2l">High to Low</option>
+        <option value="l2h">Low to High</option>
+      </select>
+      <select id="brandFilter">
+        <option value="">Filter By Brand</option>
+        <option value="Adidas">Adidas</option>
+        <option value="Bata">Bata</option>
+        <option value="Nike">Nike</option>
+        <option value="Levis">Levis</option>
+        <option value="Puma">Puma</option>
+      </select>
+      <input type="text" placeholder="search brand..." id="brandSearch" />
+    </div>
+    <div id="container"></div>
+  </body>
+</html>
+
+<script>
+  let arr = [
+    {
+      id: 1,
+      brand: "Adidas",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6HWWrIYimOqintKNtza0xP6cAT2eM9aFmlw&usqp=CAU",
+      price: "1000",
+      cutoffPrice: "2000",
+    },
+    {
+      id: 2,
+      brand: "Puma",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg53aUQ-XwmEPNIl-EwOPvGSt9wRMrQb06HA&usqp=CAU",
+      price: "1500",
+      cutoffPrice: "2500",
+    },
+    {
+      id: 3,
+      brand: "Nike",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz-OSIAXTOQCgKVqfyVbXl0NLm88-TT8HsLg&usqp=CAU",
+      price: "1900",
+      cutoffPrice: "3000",
+    },
+    {
+      id: 4,
+      brand: "Levis",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThZvU3g1jrct8xmaGT8m1mSb_Xs9qS2Fn0AA&usqp=CAU",
+      price: "2500",
+      cutoffPrice: "4000",
+    },
+    {
+      id: 5,
+      brand: "Bata",
+      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGx4EfKPgJNzE-Hhk9ZDzzM_tYd1mUhGb22g&usqp=CAU",
+      price: "1899",
+      cutoffPrice: "2500",
+    },
+  ];
+
+  function appendData(data) {
+    document.getElementById("container").innerHTML = null;
+    data.forEach((el, index) => {
+      let box = document.createElement("div");
+      box.setAttribute("class", "child");
+      let img = document.createElement("img");
+      img.setAttribute("src", el.img);
+      let brand = document.createElement("h3");
+      brand.innerText = el.brand;
+      // price div here
+      let priceDiv = document.createElement("div");
+      let price = document.createElement("p");
+      price.innerText = "$" + el.price;
+      let cutoffPrice = document.createElement("p");
+      cutoffPrice.innerText = "$" + el.cutoffPrice;
+      // append to price div
+      priceDiv.append(price, cutoffPrice);
+      // append to box
+      box.append(img, brand, priceDiv);
+      // append to parent
+      document.getElementById("container").append(box);
+    });
+  }
+
+  appendData(arr);
+
+  // sorting here
+  document.getElementById("priceSort").addEventListener("change", (e) => {
+    let sortBy = e.target.value;
+    if (sortBy === "h2l") {
+      // sort in desc
+      let newData = arr.sort((a, b) => +b.price - +a.price);
+      appendData(newData);
+    } else if (sortBy === "l2h") {
+      let newData = arr.sort((a, b) => +a.price - +b.price);
+      appendData(newData);
+    }
+  });
+
+  // filter here
+  document.getElementById("brandFilter").addEventListener("change", (e) => {
+    let brand = e.target.value;
+    let newData = arr.filter((el, index) => {
+      return el.brand == brand;
+    });
+    appendData(newData);
+  });
+
+  // brand search
+  document.getElementById("brandSearch").addEventListener("input", (e) => {
+    let input = e.target.value;
+    let newData = arr.filter((el, index) => {
+      return el.brand.toLowerCase().includes(input);
+    });
+    appendData(newData);
+  });
+</script>
