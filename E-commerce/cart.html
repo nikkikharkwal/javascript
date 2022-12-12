@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart Page</title>
+    <style>
+      /* Write all necessery css here  */
+      #cart-container {
+        width: 90%;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav">
+      <h1>Masai E-Commerce</h1>
+      <a href="./index.html">Home</a>
+      <a href="./cart.html">Cart</a>
+    </div>
+    <h1 id="total">
+      Your Total cart Price is:- <span id="cart-total">0</span>
+    </h1>
+    <div id="cart-container">
+      <!-- Here Append All the cart Products  -->
+    </div>
+  </body>
+  <script>
+    // Write all necessery JS here
+
+    let cont = document.getElementById("cart-container");
+
+    let span = document.getElementById("cart-total");
+
+    let cartData = JSON.parse(localStorage.getItem("cart")) || [];
+
+    displaybox(cartData);
+    function displaybox(data) {
+      cont.innerHTML = null;
+      let total = 0;
+      data.forEach((element,index) => {
+        total += element.quantity * element.price
+
+
+
+        let card = document.createElement("div");
+
+        let image = document.createElement("img");
+        image.setAttribute("src", element.img);
+
+        let brand = document.createElement("h2");
+        brand.innerText = element.brand;
+
+        let price = document.createElement("h3");
+        price.innerText = element.price;
+
+        let details = document.createElement("p");
+        details.innerText = element.details;
+
+        let category = document.createElement("p");
+        category.innerText = element.category;
+
+        let increment = document.createElement("button");
+        increment.innerText = "+";
+
+        let quantity = document.createElement("span");
+        quantity.innerText = element.quantity;
+
+        let decrement = document.createElement("button");
+        decrement.innerText = "-";
+
+        increment.addEventListener("click", () => {
+          ++element.quantity;
+          quantity.innerText = element.quantity;
+          localStorage.setItem("cart", JSON.stringify(data));
+          displaybox(data)
+        });
+
+        decrement.addEventListener("click", () => {
+          if(element.quantity < 1 ) {
+            element.quantity = 1;
+            quantity.innerText = element.quantity;
+            localStorage.setItem("cart", JSON.stringify(data));
+          displaybox(data)
+          }
+          else if(element.quantity > 1) {
+            --element.quantity; 
+            quantity.innerText = element.quantity;
+            localStorage.setItem("cart", JSON.stringify(data));
+          displaybox(data)
+          }
+        });
+
+        let del = document.createElement("button");
+        del.innerText = "Remove";
+        del.addEventListener("click", () => {
+          let cartData = JSON.parse(localStorage.getItem("cart")) || [];
+          let newCartData = cartData.filter((ele,ind) => {
+            if(ind === index) {
+              return false;
+            }
+            else {
+              return true;
+            }
+            cartData.push(ele)
+          })
+          localStorage.setItem("cart", JSON.stringify(newCartData));
+          displaybox(newCartData)
+          window.location.href = "cart.html";
+        });
+
+        span.innerText = total;
+
+        card.append(
+          image,
+          brand,
+          price,
+          details,
+          category,
+          increment,
+          quantity,
+          decrement,
+          del
+        );
+        cont.append(card);
+      });
+    }
+  </script>
+</html>

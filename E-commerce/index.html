@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <style>
+      /* Write all necessery css here  */
+      #product-container {
+        width: 90%;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+      }
+      img {
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="nav">
+      <h1>Masai E-Commerce</h1>
+      <a href="./index.html">Home</a>
+      <a href="./cart.html">Cart</a>
+    </div>
+    <!-- Use this Select Tag for Filtering the Products  -->
+    <select id="filter">
+      <option value="">Filter By Category</option>
+      <option value="Laptop">Laptop</option>
+      <option value="Mobile">Mobile</option>
+      <option value="Speakers">Speakers</option>
+    </select>
+    <div id="product-container">
+      <!-- Here Append All the Products  -->
+    </div>
+  </body>
+  <script>
+    // Write all necessery JS here 
+
+    let cont = document.getElementById("product-container")
+    let filter = document.getElementById("filter")
+
+    let fetched = [];
+    filter.addEventListener("change",() => {
+      let filtered = fetched.filter((element) => {
+        if(element.category === filter.value) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      })
+      displaybox(filtered)
+    })
+
+    fetch("https://dbioz2ek0e.execute-api.ap-south-1.amazonaws.com/mockapi/get-tech-products")
+    //Response Object
+    .then(res => {return res.json()})
+
+    //Actual Data
+    .then((actualData) => {
+      fetched = actualData.data;
+       displaybox(actualData.data);
+    })
+
+    .catch((error) => {
+
+    })
+
+
+    function displaybox(data){
+      cont.innerHTML = null;
+      data.forEach((element) => {
+        let card = document.createElement("div");
+
+        let image = document.createElement("img")
+        image.setAttribute("src", element.img)
+
+        let brand = document.createElement("h2");
+        brand.innerText = element.brand;
+
+        let price = document.createElement("h3");
+        price.innerText = element.price;
+
+        let details = document.createElement("p");
+        details.innerText = element.details;
+
+        let category = document.createElement("p");
+        category.innerText = element.category;
+
+        let addtoCart = document.createElement("button")
+        addtoCart.innerText = "Add To Cart";
+
+        addtoCart.addEventListener("click",() => {
+          let cardData = JSON.parse(localStorage.getItem("cart")) || [] ;
+
+          let isPresent = false;
+          for(let i = 0;i< cardData.length;i++){
+            if(cardData[i].id == element.id){
+              isPresent = true;
+              break;
+            }
+          }
+
+          if(isPresent == true) {
+            alert("Product Already in Cart");
+          }
+          else {
+            cardData.push({...element,quantity:1});
+            localStorage.setItem("cart", JSON.stringify(cardData));
+            alert("Product Added To Cart");
+          }
+          
+        })
+
+        card.append(image,brand,price,details,category,addtoCart);
+        cont.append(card)
+      })
+    }
+  </script>
+</html>
